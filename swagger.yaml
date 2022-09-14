@@ -1,0 +1,325 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: MuseKit API
+  description: 'This API allows you to access MuseKit templates and its moods with all the necesary data. It also allows users to create a custom timeline for video projects and the API will return all the subclips'
+  contact:
+    name: Juan
+    email: juan@musekit.io
+  
+servers: 
+  - url: https://api.musekit.io/api
+    description: Dev Server
+    
+paths: 
+  /templates:
+    get:
+      description: Obtain all availible templates from the database
+      responses: 
+        200: 
+          description: Successful pull of all availible templates
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Templates'
+                     
+  /templates/{id}:
+    get:
+      description: Obtain information about a specific template
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the template
+          schema:
+            type: string
+            example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
+      responses:
+        200:
+          description: Successfull pull of a specific template data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+                  
+  /templates/{id}/zip:
+    get:
+      description: Obtain a zip file containing all the moods wav files in a specific template
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the template
+          schema:
+            type: string
+            example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0' 
+      responses:
+        200:
+          description: Successfull pull of the zip file
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+                
+  /templates/{id}/moods:
+    get:
+      description: Obtain all moods in a specific template
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the template
+          schema:
+            type: string
+            example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
+      responses:
+        200:
+          description: Successfull pull of all moods in a specific template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moods'
+                    
+  /moods/{id}/wav:
+    get:
+      description: Obtain a wav file of a specific mood on a specific template
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the mood
+          schema:
+            type: string
+            example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+      responses:
+        200:
+          description: Successfull pull of a specific wav file
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+  /moods:
+    get: 
+      description: Obtain all availble moods from the database
+      responses:
+        200:
+          description: Successfull pull of all moods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moods'                   
+  /moods/{id}:
+    get:
+      description: Obtain information about a specific mood
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the mood
+          schema:
+            type: string
+            example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+      responses:
+        200:
+          description: Successfull pull of a specific mood data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mood'
+                  
+                  
+  /subClips:
+    post:
+      description: Returns all subclips needed according to user request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomMoods'
+      responses:
+        200:
+          description: Successfull creation of sublicps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubClips'                                     
+components:
+  schemas:
+    CustomMood: 
+      properties:
+        moodId:
+          type: string
+          example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+        moodInPoint:
+          description: Exact point in seconds relative to the project timeline where the selected mood starts
+          type: number
+          format: double
+          example: 5
+        moodOutPoint:
+          description: Exact point in seconds relative to the project timeline where the selected mood ends        
+          type: number
+          format: double
+          example: 50
+          
+    SubClip:
+      description: Model containing SubClip info
+      properties:
+        id:
+          type: string
+          example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+        insertionPoint:
+          description: Exact point in seconds where to insert the subClip in the project timeline
+          type: number
+          format: double
+          example: 14.76923076923077
+        clipInPoint:
+          description: Exact point in seconds relative to the original mood audio where the sub clip starts
+          type: number
+          format: double
+          example: 14.76923076923077
+        clipOutPoint:
+          description: Exact point in seconds relative to the original mood audio where the sub clip ends
+          type: number
+          format: double
+          example: 29.53846153846154 
+    Loop:
+      description: Model containing loop info
+      properties:
+        loopStartPoint:
+          description: Exact point in seconds where the loop starts
+          type: number
+          format: double
+          example: 43.1999
+        loopEndPoint:
+          description: Exact point in seconds where the loop ends
+          type: number
+          format: double
+          example: 62.4      
+      
+    Mood:
+      description: Model containing mood info
+      properties:
+        moodnName: 
+          type: string
+          example: 'Epic'
+        id:
+          type: string
+          example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+        wav: 
+          type: string
+          example: 'Epic.wav'
+        bpm:
+          description: Beats per Minute
+          type: integer
+          example: 100
+        bpb: 
+          description: Beats per Bar
+          type: integer
+          example: 4
+        points:
+          description: Points used to rank each mood
+          type: integer
+          example: 0
+        path: 
+          type: string
+          example: '/musekit-api/data/templates/uplifting-power/Epic.wav'
+        sampleRate:
+          type: integer
+          example: 44100
+        length:
+          description: Duration of the mood audio
+          type: number
+          format: double
+          example: 72.0
+        introInPoint:
+          description: Exact point in seconds where the intro starts
+          type: number
+          format: double
+          example: 0
+        introOutPoint:
+          description: Exact point in seconds where the intro ends
+          type: number
+          format: double
+          example: 4.8
+        outroInPoint: 
+          description: Exact point in seconds where the outro starts
+          type: number
+          format: double
+          example: 62.4
+        outroOutPoint:
+          description: Exact point in seconds where the outro ends
+          type: number
+          format: double
+          example: 72.0
+        loops:
+            $ref: '#/components/schemas/Loops'
+        cutMarkers:
+          description: Exact point in seconds where song can be cutted (where each bar is)
+          type: array
+          items:
+            type: number
+            format: double
+            example: 4.8      
+            
+    Template:
+      description: Model containing loop info
+      properties:
+        id:
+          type: string
+          example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
+        template name:
+          type: string
+          example: 'Uplifting Power'
+        points:
+          description: Points used to rank each template
+          type: integer
+          example: 0
+        composer:
+          type: string
+          example: ''
+        genre:
+          type: string
+          example: 'rock'
+        isFree:
+          type: boolean
+          example: true
+        tag:
+          type: string
+          example: 'Not availible for ...'
+        moods:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mood'
+    
+    Loops:
+      description: Array of loop info
+      type: array
+      items:
+        $ref: '#/components/schemas/Loop'
+    
+    Moods:
+      description: Array of mood info
+      type: array
+      items:
+        $ref: '#/components/schemas/Mood'
+    
+    Templates:
+      description: Array of templates info
+      type: array
+      items:
+        $ref: '#/components/schemas/Template'
+    
+    SubClips:
+      description: Array of subclip info
+      type: array
+      items:
+        $ref: '#/components/schemas/SubClip'
+    
+    CustomMoods:
+      description: Array of customMood info
+      type: array
+      items:
+        $ref: '#/components/schemas/CustomMood'
