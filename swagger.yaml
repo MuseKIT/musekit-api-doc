@@ -12,6 +12,24 @@ servers:
     description: Dev Server
     
 paths:
+  /version:
+    get:
+      description: Get latest version of the API and PR Extension
+      responses: 
+        200:
+          description: Succesfull pull of API and PR extension versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api:
+                    type: string
+                  prExtension: 
+                    type: string
+                  prUrgentUpdate:
+                    type: boolean
+
   /upload-file:
     post:
       description: Get a PUT pre signed URL to upload wav/mp3 files
