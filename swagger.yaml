@@ -8,10 +8,37 @@ info:
     email: juan@musekit.io
   
 servers: 
-  - url: https://api.musekit.io/api
+  - url: https://api.musekit.io/api/v1
     description: Dev Server
     
-paths: 
+paths:
+  /upload-file:
+    post:
+      description: Get a PUT pre signed URL to upload wav/mp3 files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateName: 
+                  type: string
+                fileName:
+                  type: string
+                fileType: 
+                  type: string
+      responses:
+        200:
+          description: Succesfull creation of a PUT pre signed URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+
   /templates:
     get:
       description: Obtain all availible templates from the database
@@ -22,6 +49,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Templates'
+    post:
+      description: Insert a new template in the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplatePost'
+      responses:
+        200:
+          description: Successfull creation of sublicps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'                
+    
                      
   /templates/{id}:
     get:
@@ -81,7 +124,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Moods'
                     
-  /moods/{id}/wav:
+  /moods/{id}/media-file:
     get:
       description: Obtain a wav file of a specific mood on a specific template
       parameters:
@@ -94,12 +137,14 @@ paths:
             example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
       responses:
         200:
-          description: Successfull pull of a specific wav file
+          description: Successfull pull of a AWS pre signed Url containg the media file
           content:
-            audio/wav:
+            application/json:
               schema:
-                type: string
-                format: binary
+                type: object
+                properties:
+                  url:
+                    type: string
   /moods:
     get: 
       description: Obtain all availble moods from the database
@@ -109,7 +154,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Moods'                   
+                $ref: '#/components/schemas/Moods'
+    post:
+      description: Insert a new Mood in the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoodPost'
+      responses:
+        200:
+          description: Successfull creation of sublicps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mood'                      
   /moods/{id}:
     get:
       description: Obtain information about a specific mood
@@ -208,6 +268,75 @@ components:
         id:
           type: string
           example: '00df36c4-2a2d-4564-bd83-eafdda99b512'
+        templateId:
+          type: string
+          example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
+        wav: 
+          type: string
+          example: 'Epic.wav'
+        bpm:
+          description: Beats per Minute
+          type: integer
+          example: 100
+        bpb: 
+          description: Beats per Bar
+          type: integer
+          example: 4
+        points:
+          description: Points used to rank each mood
+          type: integer
+          example: 0
+        path:
+          description: It must be the template name followed by a slash and the name of the media file,  
+          type: string
+          example: 'Template/Epic.wav'
+        sampleRate:
+          type: integer
+          example: 44100
+        length:
+          description: Duration of the mood audio
+          type: number
+          format: double
+          example: 72.0
+        introInPoint:
+          description: Exact point in seconds where the intro starts
+          type: number
+          format: double
+          example: 0
+        introOutPoint:
+          description: Exact point in seconds where the intro ends
+          type: number
+          format: double
+          example: 4.8
+        outroInPoint: 
+          description: Exact point in seconds where the outro starts
+          type: number
+          format: double
+          example: 62.4
+        outroOutPoint:
+          description: Exact point in seconds where the outro ends
+          type: number
+          format: double
+          example: 72.0
+        loops:
+            $ref: '#/components/schemas/Loops'
+        cutMarkers:
+          description: Exact point in seconds where song can be cutted (where each bar is)
+          type: array
+          items:
+            type: number
+            format: double
+            example: 4.8      
+
+    MoodPost:
+      description: Model containing mood info
+      properties:
+        moodnName: 
+          type: string
+          example: 'Epic'
+        templateId:
+          type: string
+          example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
         wav: 
           type: string
           example: 'Epic.wav'
@@ -262,14 +391,41 @@ components:
           items:
             type: number
             format: double
-            example: 4.8      
-            
+            example: 4.8         
+
     Template:
       description: Model containing loop info
       properties:
         id:
           type: string
           example: '8120ae62-afd0-4fa0-b0c9-727bb2aaa9f0'
+        template name:
+          type: string
+          example: 'Uplifting Power'
+        points:
+          description: Points used to rank each template
+          type: integer
+          example: 0
+        composer:
+          type: string
+          example: ''
+        genre:
+          type: string
+          example: 'rock'
+        isFree:
+          type: boolean
+          example: true
+        tag:
+          type: string
+          example: 'Not availible for ...'
+        moods:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mood'
+
+    TemplatePost:
+      description: Model containing loop info
+      properties:
         template name:
           type: string
           example: 'Uplifting Power'
