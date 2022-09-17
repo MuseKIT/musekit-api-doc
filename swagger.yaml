@@ -59,7 +59,7 @@ paths:
               $ref: '#/components/schemas/TemplatePost'
       responses:
         200:
-          description: Successfull creation of sublicps
+          description: Successfull insertion of a template in the database 
           content:
             application/json:
               schema:
@@ -165,7 +165,7 @@ paths:
               $ref: '#/components/schemas/MoodPost'
       responses:
         200:
-          description: Successfull creation of sublicps
+          description: Successfull insertion of a Mood in the database 
           content:
             application/json:
               schema:
