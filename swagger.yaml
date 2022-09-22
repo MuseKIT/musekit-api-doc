@@ -29,6 +29,121 @@ paths:
                     type: string
                   prUrgentUpdate:
                     type: boolean
+  /register:
+    post:
+      description: Register User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                terms:
+                  type: boolean
+                termsUrl:
+                  type: string
+      responses:
+        400:
+          description: Invalid format
+        201:
+          description: New user Added
+  
+  /login:
+    post:
+      description: Log in user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        400:
+          description: Invalid format
+        401: 
+          description: Invalid email or password
+        200:
+          description: Succesfull Login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+
+  /token:
+    post:
+      description: Get a new Access Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Current user refreshToken
+      responses:
+        401:
+          description: No refresh token included
+        403: 
+          description: Invalid refresh token
+        200:
+          description: Succesfull creation of new access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+
+  /logout:
+    delete:
+      description: Log out user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Current user refreshToken
+      responses:
+        204:
+          description: succesfull logout
+
+  /getUser:
+    get:
+      description: Route to test auth
+      responses:
+        401:
+          description: No access token provided
+        403:
+          description: Invalid access token
+        200:
+          description: Succesfull pull of current user data
+          
 
   /upload-file:
     post:
