@@ -31,7 +31,7 @@ paths:
                     type: boolean
   /register:
     post:
-      description: Register User
+      description: Register User for access to MuseKit extension
       requestBody:
         required: true
         content:
@@ -59,7 +59,7 @@ paths:
   
   /login:
     post:
-      description: Log in user
+      description: Log in user for MuseKit extension
       requestBody:
         required: true
         content:
@@ -90,7 +90,7 @@ paths:
 
   /token:
     post:
-      description: Get a new Access Token
+      description: Get a new Access Token. Access tokens are needed along every request in the Authorization Header to access all other routes in the API
       requestBody:
         required: true
         content:
@@ -118,7 +118,7 @@ paths:
 
   /logout:
     delete:
-      description: Log out user
+      description: Log out user and eliminate refresh and access tokens
       requestBody:
         required: true
         content:
@@ -147,7 +147,7 @@ paths:
 
   /upload-file:
     post:
-      description: Get a PUT pre signed URL to upload wav/mp3 files
+      description: Get a PUT pre signed URL to upload wav/mp3 files. This is needed to upload new mp3/wav files in a secure way.
       requestBody:
         required: true
         content:
@@ -174,7 +174,7 @@ paths:
 
   /templates:
     get:
-      description: Obtain all availible templates from the database
+      description: Obtain all availible music templates from MuseKit
       responses: 
         200: 
           description: Successful pull of all availible templates
@@ -201,7 +201,7 @@ paths:
                      
   /templates/{id}:
     get:
-      description: Obtain information about a specific template
+      description: Obtain all information about a specific template
       parameters:
         - in: path
           name: id
@@ -220,7 +220,7 @@ paths:
                   
   /templates/{id}/zip:
     get:
-      description: Obtain a zip file containing all the moods wav files in a specific template
+      description: Obtain a zip file containing all the moods wav files from a specific template
       parameters:
         - in: path
           name: id
@@ -240,7 +240,7 @@ paths:
                 
   /templates/{id}/moods:
     get:
-      description: Obtain all moods in a specific template
+      description: Obtain all moods information from a specific template
       parameters:
         - in: path
           name: id
@@ -280,7 +280,7 @@ paths:
                     type: string
   /moods:
     get: 
-      description: Obtain all availble moods from the database
+      description: Obtain all availble moods from MuseKit
       responses:
         200:
           description: Successfull pull of all moods
